@@ -2,6 +2,7 @@
 const form = document.getElementById('input-form');
 const questionContainer = document.getElementById('question');
 const timerContainer = document.getElementById('timer');
+let questionsRemaining = [];
 let currentQuestionIndex = 0;
 
 form.addEventListener('submit', function(event) {
@@ -9,21 +10,29 @@ form.addEventListener('submit', function(event) {
   const numQuestions = parseInt(document.getElementById('num-questions').value);
   const timeInterval = parseInt(document.getElementById('time-interval').value) * 1000;
 
-  displayQuestion();
+  // Populate questionsRemaining array with all questions
+  questionsRemaining = [...questions];
+
+  displayNextQuestion();
   setTimeout(displayNextQuestion, timeInterval);
 
-  function displayQuestion() {
-    questionContainer.innerHTML = questions[currentQuestionIndex].prompt;
-  }
-
   function displayNextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < numQuestions) {
-      displayQuestion();
-      setTimeout(displayNextQuestion, timeInterval);
+    if (questionsRemaining.length > 0 && currentQuestionIndex < numQuestions) {
+      // Pick a random question from questionsRemaining
+      const randomIndex = Math.floor(Math.random() * questionsRemaining.length);
+      const randomQuestion = questionsRemaining[randomIndex];
+      
+      // Display the randomly picked question
+      questionContainer.innerHTML = randomQuestion.prompt;
+      
+      // Remove the picked question from questionsRemaining
+      questionsRemaining.splice(randomIndex, 1);
+
+      currentQuestionIndex++;
     } else {
-      questionContainer.innerHTML = "Thank you for answering the questions!";
+      questionContainer.innerHTML = "Hope you had fun!";
       timerContainer.innerHTML = "";
     }
   }
 });
+
